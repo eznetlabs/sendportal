@@ -61,5 +61,9 @@ class AppServiceProvider extends ServiceProvider
         );
 
         Livewire::component('setup', Setup::class);
+
+        if(config('app.env') === 'production') {
+            \URL::forceScheme('https');
+        }
     }
 }
