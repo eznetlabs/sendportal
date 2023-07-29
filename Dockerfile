@@ -8,16 +8,20 @@ ARG APP_KEY
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 
+RUN apt-get update && apt-get install -y \
+    zlib1g-dev \
+    libzip-dev \
+    libpq-dev
+
 RUN docker-php-ext-configure opcache --enable-opcache && \
-    docker-php-ext-install pdo pdo_mysql && \
-    docker-php-ext-install pdo pdo_pgsql
+    docker-php-ext-install pdo pdo_mysql
 
 RUN docker-php-ext-configure pcntl --enable-pcntl \
     && docker-php-ext-install pcntl
 
-RUN apt-get update && apt-get install -y \
-    zlib1g-dev \
-    libzip-dev
+RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+    && docker-php-ext-install pdo pdo_pgsql pgsql
+
 
 RUN docker-php-ext-configure zip \
     && docker-php-ext-install zip
