@@ -16,7 +16,7 @@ COPY --from=build /usr/bin/composer /usr/bin/composer
 RUN composer install --prefer-dist --no-interaction --ignore-platform-reqs
 
 COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
-COPY .env.dev /var/www/html/.env
+# COPY .env.dev /var/www/html/.env
 
 RUN php artisan config:cache && \
     php artisan route:cache && \
