@@ -34,6 +34,8 @@ COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
 # COPY .env.prod /var/www/html/.env
 # RUN php artisan sp:install
 
+RUN php artisan vendor:publish --provider=Sendportal\\Base\\SendportalBaseServiceProvider
+
 # RUN php artisan config:cache && \
 #     php artisan route:cache
 
