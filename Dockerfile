@@ -2,28 +2,6 @@ FROM composer:2.4 as build
 COPY . /app/
 RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
 
-FROM php:8.2-apache-buster as dev
-
-ARG APP_KEY
-ENV APP_ENV=dev
-ENV APP_DEBUG=true
-
-RUN apt-get update && apt-get install -y zip
-RUN docker-php-ext-install pdo pdo_mysql
-
-COPY . /var/www/html/
-COPY --from=build /usr/bin/composer /usr/bin/composer
-RUN composer install --prefer-dist --no-interaction --ignore-platform-reqs
-
-COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
-# COPY .env.dev /var/www/html/.env
-
-RUN php artisan config:cache && \
-    php artisan route:cache && \
-    chmod 777 -R /var/www/html/storage/ && \
-    chown -R www-data:www-data /var/www/ && \
-    a2enmod rewrite
-
 FROM php:8.1-apache-buster as production
 
 ARG APP_KEY
@@ -31,7 +9,8 @@ ENV APP_ENV=production
 ENV APP_DEBUG=false
 
 RUN docker-php-ext-configure opcache --enable-opcache && \
-    docker-php-ext-install pdo pdo_mysql
+    docker-php-ext-install pdo pdo_mysql && \
+    docker-php-ext-install pdo pdo_pgsql
 
 RUN docker-php-ext-configure pcntl --enable-pcntl \
     && docker-php-ext-install pcntl
@@ -51,8 +30,10 @@ COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
 # COPY .env.prod /var/www/html/.env
 # RUN php artisan sp:install
 
-RUN php artisan config:cache && \
-    php artisan route:cache && \
-    chmod 777 -R /var/www/html/storage/ && \
+# RUN php artisan config:cache && \
+#     php artisan route:cache
+
+RUN chmod 777 -R /var/www/html/storage/ && \
     chown -R www-data:www-data /var/www/ && \
     a2enmod rewrite
+    
