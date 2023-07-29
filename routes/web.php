@@ -13,6 +13,7 @@ Auth::routes(
         'verify' => config('sendportal-host.auth.register', false),
         'register' => config('sendportal-host.auth.register', false),
         'reset' => config('sendportal-host.auth.password_reset'),
+        'logout' => false
     ]
 );
 
