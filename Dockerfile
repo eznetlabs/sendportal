@@ -3,7 +3,7 @@ COPY . /app/
 WORKDIR /app/
 RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-interaction
 
-FROM php:8.2-apache-buster as production
+FROM php:7.4.26-apache-buster as production
 
 ARG APP_KEY
 ENV APP_ENV=production
@@ -13,8 +13,7 @@ RUN docker-php-ext-configure opcache --enable-opcache && \
     docker-php-ext-install pdo pdo_mysql
 
 RUN docker-php-ext-configure pcntl --enable-pcntl \
-    && docker-php-ext-install \
-    pcntl
+    && docker-php-ext-install pcntl
 
 COPY docker/php/conf.d/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
